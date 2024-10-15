@@ -1,0 +1,88 @@
+//Construct an Expression Tree from prefix expression. Perform recursive and nonrecursive post-order traversals.
+
+
+
+#include <iostream>
+#include <stack>
+
+using namespace std;
+
+struct Node {
+    char data;
+    Node* left;
+    Node* right;
+};
+
+Node* constructExpressionTree(string prefix) {
+    stack<Node*> stack;
+
+    for (int i = prefix.length() - 1; i >= 0; i--) {
+        Node* newNode = new Node;
+        newNode->data = prefix[i];
+        newNode->left = nullptr;
+        newNode->right = nullptr;
+
+        if (isalnum(prefix[i])) {
+            stack.push(newNode);
+        } else {
+            newNode->right = stack.top();
+            stack.pop();
+            newNode->left = stack.top();
+            stack.pop();
+            stack.push(newNode);
+        }
+    }
+
+    return stack.top();
+}
+
+void postOrderTraversalRecursive(Node* root) {
+    if (root == nullptr) {
+        return;
+    }
+
+    postOrderTraversalRecursive(root->left);
+    postOrderTraversalRecursive(root->right);
+    cout << root->data;
+}
+
+void postOrderTraversalNonRecursive(Node* root) {
+    stack<Node*> stack;
+    Node* current = root;
+
+    while (current != nullptr || !stack.empty()) {
+        if (current != nullptr) {
+            stack.push(current);
+            current = current->left;
+        } else {
+            Node* temp = stack.top();
+            stack.pop();
+
+            if (temp->right != nullptr && temp->right != current) {
+                stack.push(temp);
+                current = temp->right;
+            } else {
+                cout << temp->data;
+                current = nullptr;
+            }
+        }
+    }
+}
+
+int main() {
+    string prefix;
+    cout << "Enter the prefix expression: ";
+    cin >> prefix;
+
+    Node* root = constructExpressionTree(prefix);
+
+    cout << "Post-order traversal (recursive): ";
+    postOrderTraversalRecursive(root);
+    cout << endl;
+
+    cout << "Post-order traversal (non-recursive): ";
+    postOrderTraversalNonRecursive(root);
+    cout << endl;
+
+    return 0;
+}
