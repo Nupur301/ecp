@@ -1,0 +1,54 @@
+//Consider a student database of SEIT class (at least 15 records). Database contains
+different fields of every student like Roll No, Name and SGPA.(array of structure)
+d) Search students according to SGPA. If more than one student having same
+SGPA, then print list of all students having same SGPA.
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+struct Student {
+    int rollNo;
+    string name;
+    float SGPA;
+};
+
+void searchStudentsBySGPA(Student students[], int n, float targetSGPA) {
+    vector<Student> matchingStudents;
+
+    for (int i = 0; i < n; i++) {
+        if (students[i].SGPA == targetSGPA) {
+            matchingStudents.push_back(students[i]);
+        }
+    }
+
+    if (matchingStudents.empty()) {
+        cout << "No students found with SGPA " << targetSGPA << endl;
+    } else {
+        cout << "Students with SGPA " << targetSGPA << ":" << endl;
+        cout << "Name\tRoll No\tSGPA" << endl;
+        cout << "----\t-------\t----" << endl;
+        for (const Student& student : matchingStudents) {
+            cout << student.name << "\t" << student.rollNo << "\t" << student.SGPA << endl;
+        }
+    }
+}
+
+int main() {
+    Student students[15];
+
+    // Populate the student database with data
+    // ...
+
+    int n = 15; // Assuming 15 students
+
+    float targetSGPA;
+    cout << "Enter the target SGPA: ";
+    cin >> targetSGPA;
+
+    searchStudentsBySGPA(students, n, targetSGPA);
+
+    return 0;
+}
