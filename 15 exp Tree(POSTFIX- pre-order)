@@ -1,0 +1,85 @@
+Construct an Expression Tree from postfix expression. Perform recursive and non-
+recursive pre-order traversals.
+
+#include <iostream>
+#include <stack>
+#include <string>
+#include <cctype>
+
+using namespace std;
+
+// Structure for tree node
+struct TreeNode {
+    char value;
+    TreeNode *left;
+    TreeNode *right;
+
+    TreeNode(char val) : value(val), left(nullptr), right(nullptr) {}
+};
+
+// Function to check if a character is an operator
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/';
+}
+
+// Function to construct an expression tree from a postfix expression
+TreeNode* constructExpressionTree(const string& postfix) {
+    stack<TreeNode*> s;
+
+    for (char c : postfix) {
+        if (isalnum(c)) { // If the character is an operand
+            s.push(new TreeNode(c));
+        } else if (isOperator(c)) { // If the character is an operator
+            TreeNode* right = s.top(); s.pop();
+            TreeNode* left = s.top(); s.pop();
+            TreeNode* node = new TreeNode(c);
+            node->left = left;
+            node->right = right;
+            s.push(node);
+        }
+    }
+
+    return s.top(); // The root of the expression tree
+}
+
+// Recursive pre-order traversal
+void preOrderRecursive(TreeNode* root) {
+    if (root) {
+        cout << root->value << " ";
+        preOrderRecursive(root->left);
+        preOrderRecursive(root->right);
+    }
+}
+
+// Non-recursive pre-order traversal
+void preOrderIterative(TreeNode* root) {
+    if (root == nullptr) return;
+
+    stack<TreeNode*> s;
+    s.push(root);
+
+    while (!s.empty()) {
+        TreeNode* current = s.top(); s.pop();
+        cout << current->value << " ";
+
+        // Push right first so that left is processed first
+        if (current->right) s.push(current->right);
+        if (current->left) s.push(current->left);
+    }
+}
+
+// Main function
+int main() {
+    string postfix = "ab+cde+**"; // Example postfix expression
+    TreeNode* root = constructExpressionTree(postfix);
+
+    cout << "Pre-order Traversal (Recursive): ";
+    preOrderRecursive(root);
+    cout << endl;
+
+    cout << "Pre-order Traversal (Iterative): ";
+    preOrderIterative(root);
+    cout << endl;
+
+    return 0;
+}
