@@ -1,0 +1,115 @@
+Implement In-order Threaded Binary Tree and traverse it in In-order and Pre-order.
+
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* left;
+    Node* right;
+    bool isThreaded; // True if right pointer is a thread, else false
+
+    Node(int val) {
+        data = val;
+        left = right = nullptr;
+        isThreaded = false;
+    }
+};
+
+class ThreadedBinaryTree {
+private:
+    Node* root;
+
+    // Utility function to traverse In-order
+    Node* leftMost(Node* node) {
+        while (node != nullptr && node->left != nullptr)
+            node = node->left;
+        return node;
+    }
+
+public:
+    ThreadedBinaryTree() {
+        root = nullptr;
+    }
+
+    void insert(int val) {
+        if (root == nullptr) {
+            root = new Node(val);
+            return;
+        }
+
+        Node* curr = root;
+        Node* parent = nullptr;
+
+        while (curr != nullptr) {
+            if (val == curr->data) return; // no duplicates allowed
+            parent = curr;
+            if (val < curr->data) {
+                if (curr->left == nullptr) break;
+                curr = curr->left;
+            } else {
+                if (curr->isThreaded) break;
+                if (curr->right == nullptr) break;
+                curr = curr->right;
+            }
+        }
+
+        Node* newNode = new Node(val);
+        if (val < parent->data) {
+            parent->left = newNode;
+            newNode->right = parent;
+            newNode->isThreaded = true;
+        } else {
+            newNode->right = parent->right;
+            parent->right = newNode;
+            parent->isThreaded = false;
+        }
+    }
+
+    void inOrderTraversal() {
+        Node* curr = leftMost(root);
+        while (curr != nullptr) {
+            cout << curr->data << " ";
+            if (curr->isThreaded)
+                curr = curr->right;
+            else
+                curr = leftMost(curr->right);
+        }
+        cout << endl;
+    }
+
+    void preOrderTraversal() {
+        Node* curr = root;
+        while (curr != nullptr) {
+            cout << curr->data << " ";
+            if (curr->left != nullptr) {
+                curr = curr->left;
+            } else {
+                while (curr != nullptr && curr->isThreaded) {
+                    curr = curr->right;
+                    if (curr != nullptr) cout << curr->data << " ";
+                }
+                if (curr != nullptr) curr = curr->right;
+            }
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    ThreadedBinaryTree tbt;
+    tbt.insert(10);
+    tbt.insert(5);
+    tbt.insert(15);
+    tbt.insert(3);
+    tbt.insert(7);
+
+    cout << "In-order traversal: ";
+    tbt.inOrderTraversal();
+
+    cout << "Pre-order traversal: ";
+    tbt.preOrderTraversal();
+
+    return 0;
+}
