@@ -1,0 +1,92 @@
+Construct an Expression Tree from postfix expression. Perform recursive and non-
+recursive post-order traversals.
+
+#include <iostream>
+#include <stack>
+#include <string>
+#include <cctype>
+
+using namespace std;
+
+// Structure for tree node
+struct TreeNode {
+    char value;
+    TreeNode *left;
+    TreeNode *right;
+
+    TreeNode(char val) : value(val), left(nullptr), right(nullptr) {}
+};
+
+// Function to check if a character is an operator
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/';
+}
+
+// Function to construct an expression tree from a postfix expression
+TreeNode* constructExpressionTree(const string& postfix) {
+    stack<TreeNode*> s;
+
+    for (char c : postfix) {
+        if (isalnum(c)) { // If the character is an operand
+            s.push(new TreeNode(c));
+        } else if (isOperator(c)) { // If the character is an operator
+            TreeNode* right = s.top(); s.pop();
+            TreeNode* left = s.top(); s.pop();
+            TreeNode* node = new TreeNode(c);
+            node->left = left;
+            node->right = right;
+            s.push(node);
+        }
+    }
+
+    return s.top(); // The root of the expression tree
+}
+
+// Recursive post-order traversal
+void postOrderRecursive(TreeNode* root) {
+    if (root) {
+        postOrderRecursive(root->left);
+        postOrderRecursive(root->right);
+        cout << root->value << " ";
+    }
+}
+
+// Non-recursive post-order traversal
+void postOrderIterative(TreeNode* root) {
+    if (root == nullptr) return;
+
+    stack<TreeNode*> s1, s2;
+    s1.push(root);
+
+    // First pass: push nodes to s2 in reverse post-order
+    while (!s1.empty()) {
+        TreeNode* current = s1.top(); s1.pop();
+        s2.push(current);
+
+        // Push left and right children to s1
+        if (current->left) s1.push(current->left);
+        if (current->right) s1.push(current->right);
+    }
+
+    // Second pass: pop from s2 to get post-order
+    while (!s2.empty()) {
+        cout << s2.top()->value << " ";
+        s2.pop();
+    }
+}
+
+// Main function
+int main() {
+    string postfix = "ab+cde+**"; // Example postfix expression
+    TreeNode* root = constructExpressionTree(postfix);
+
+    cout << "Post-order Traversal (Recursive): ";
+    postOrderRecursive(root);
+    cout << endl;
+
+    cout << "Post-order Traversal (Iterative): ";
+    postOrderIterative(root);
+    cout << endl;
+
+    return 0;
+}
