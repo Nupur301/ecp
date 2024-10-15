@@ -1,0 +1,112 @@
+//Implement stack as an abstract data type using singly linked list and use this ADT
+for conversion of infix expression to prefix expression
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+struct Node {
+    char data;
+    Node* next;
+};
+
+class Stack {
+public:
+    Stack() {
+        top = nullptr;
+    }
+
+    bool isEmpty() {
+        return top == nullptr;
+    }
+
+    void push(char data) {
+        Node* newNode = new Node;
+        newNode->data = data;
+        newNode->next = top;
+        top = newNode;
+    }
+
+    char pop() {
+        if (isEmpty()) {
+            return '\0'; // Empty stack
+        }
+
+        char data = top->data;
+        Node* temp = top;
+        top = top->next;
+        delete temp;
+        return data;
+    }
+
+    char peek() {
+        if (isEmpty()) {
+            return '\0'; // Empty stack
+        }
+
+        return top->data;
+    }
+
+private:
+    Node* top;
+};
+
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+}
+
+int precedence(char c) {
+    if (c == '^') {
+        return 3;
+    } else if (c == '*' || c == '/') {
+        return 2;
+    } else if (c == '+' || c == '-') {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+string infixToPrefix(string infix) {
+    reverse(infix.begin(), infix.end());
+    Stack operatorStack;
+    string prefix;
+
+    for (char c : infix) {
+        if (isalnum(c)) {
+            prefix += c;
+        } else if (c == ')') {
+            operatorStack.push(c);
+        } else if (c == '(') {
+            while (!operatorStack.isEmpty() && operatorStack.peek() != ')') {
+                prefix += operatorStack.pop();
+            }
+            operatorStack.pop(); // Pop the ')'
+        } else if (isOperator(c)) {
+            while (!operatorStack.isEmpty() && precedence(c) < precedence(operatorStack.peek())) {
+                prefix += operatorStack.pop();
+            }
+            operatorStack.push(c);
+        }
+    }
+
+    while (!operatorStack.isEmpty()) {
+        prefix += operatorStack.pop();
+    }
+
+    reverse(prefix.begin(), prefix.end());
+    return prefix;
+}
+
+int main() {
+    string infix;
+    cout << "Enter the infix expression: ";
+    cin >> infix;
+
+    string prefix = infixToPrefix(infix);
+    cout << "Prefix expression: " << prefix << endl;
+
+    return 0;
+}
