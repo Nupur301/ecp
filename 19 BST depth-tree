@@ -1,0 +1,130 @@
+Implement binary search tree and perform following operations:
+a) Insert (Handle insertion of duplicate entry)
+b) Delete
+c) Search
+d) Display tree (Traversal)
+e) Display - Depth of tree
+
+#include <iostream>
+using namespace std;
+
+// Structure for tree node
+struct TreeNode {
+    int value;
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(int val) : value(val), left(nullptr), right(nullptr) {}
+};
+
+// Class for the Binary Search Tree
+class BinarySearchTree {
+private:
+    TreeNode* root;
+
+    TreeNode* insert(TreeNode* node, int value) {
+        if (!node) return new TreeNode(value);
+
+        if (value < node->value) {
+            node->left = insert(node->left, value);
+        } else if (value > node->value) { // Handle duplicates by ignoring them
+            node->right = insert(node->right, value);
+        }
+        return node;
+    }
+
+    TreeNode* search(TreeNode* node, int value) {
+        if (!node || node->value == value) return node;
+        if (value < node->value) return search(node->left, value);
+        return search(node->right, value);
+    }
+
+    TreeNode* deleteNode(TreeNode* node, int value) {
+        if (!node) return node;
+
+        if (value < node->value) {
+            node->left = deleteNode(node->left, value);
+        } else if (value > node->value) {
+            node->right = deleteNode(node->right, value);
+        } else { // Node to be deleted found
+            if (!node->left) return node->right;
+            else if (!node->right) return node->left;
+
+            // Node with two children: Get the inorder successor (smallest in the right subtree)
+            TreeNode* minNode = node->right;
+            while (minNode && minNode->left) {
+                minNode = minNode->left;
+            }
+
+            node->value = minNode->value; // Copy the inorder successor's value to this node
+            node->right = deleteNode(node->right, minNode->value); // Delete the inorder successor
+        }
+        return node;
+    }
+
+    void inOrder(TreeNode* node) {
+        if (node) {
+            inOrder(node->left);
+            cout << node->value << " ";
+            inOrder(node->right);
+        }
+    }
+
+    int depth(TreeNode* node) {
+        if (!node) return 0;
+        int leftDepth = depth(node->left);
+        int rightDepth = depth(node->right);
+        return max(leftDepth, rightDepth) + 1; // Height of the node
+    }
+
+public:
+    BinarySearchTree() : root(nullptr) {}
+
+    void insert(int value) {
+        root = insert(root, value);
+    }
+
+    void deleteNode(int value) {
+        root = deleteNode(root, value);
+    }
+
+    TreeNode* search(int value) {
+        return search(root, value);
+    }
+
+    void display() {
+        cout << "In-order Traversal: ";
+        inOrder(root);
+        cout << endl;
+    }
+
+    int getDepth() {
+        return depth(root);
+    }
+};
+
+// Main function
+int main() {
+    BinarySearchTree bst;
+
+    bst.insert(10);
+    bst.insert(5);
+    bst.insert(15);
+    bst.insert(3);
+    bst.insert(7);
+    bst.insert(12);
+    bst.insert(18);
+
+    bst.display();
+
+    bst.deleteNode(10);
+    cout << "After deleting 10:" << endl;
+    bst.display();
+
+    cout << "Searching for 7: " << (bst.search(7) ? "Found" : "Not Found") << endl;
+    cout << "Searching for 20: " << (bst.search(20) ? "Found" : "Not Found") << endl;
+
+    cout << "Depth of the tree: " << bst.getDepth() << endl;
+
+    return 0;
+}
