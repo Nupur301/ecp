@@ -1,0 +1,95 @@
+//Implement stack as an abstract data type using singly linked list and use this ADT
+for evaluation of postfix expression.
+
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+class Stack {
+public:
+    Stack() {
+        top = nullptr;
+    }
+
+    bool isEmpty() {
+        return top == nullptr;
+    }
+
+    void push(int data) {
+        Node* newNode = new Node;
+        newNode->data = data;
+        newNode->next = top;
+        top = newNode;
+    }
+
+    int pop() {
+        if (isEmpty()) {
+            return -1; // Empty stack
+        }
+
+        int data = top->data;
+        Node* temp = top;
+        top = top->next;
+        delete temp;
+        return data;
+    }
+
+    int peek() {
+        if (isEmpty()) {
+            return -1; // Empty stack
+        }
+
+        return top->data;
+    }
+
+private:
+    Node* top;
+};
+
+int evaluatePostfix(string postfix) {
+    Stack operandStack;
+
+    for (char c : postfix) {
+        if (isdigit(c)) {
+            operandStack.push(c - '0');
+        } else if (c == '+' || c == '-' || c == '*' || c == '/') {
+            int operand2 = operandStack.pop();
+            int operand1 = operandStack.pop();
+
+            switch (c) {
+                case '+':
+                    operandStack.push(operand1 + operand2);
+                    break;
+                case '-':
+                    operandStack.push(operand1 - operand2);
+                    break;
+                case '*':
+                    operandStack.push(operand1 * operand2);
+                    break;
+                case '/':
+                    operandStack.push(operand1 / operand2);
+                    break;
+            }
+        }
+    }
+
+    return operandStack.pop();
+}
+
+int main() {
+    string postfix;
+    cout << "Enter the postfix expression: ";
+    cin >> postfix;
+
+    int result = evaluatePostfix(postfix);
+    cout << "Result: " << result << endl;
+
+    return 0;
+}
