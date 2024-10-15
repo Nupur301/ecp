@@ -1,0 +1,55 @@
+//Implement Circular Queue using Array. Perform following operations on it.
+a) Insertion (Enqueue)
+
+
+#include <iostream>
+
+using namespace std;
+
+const int MAX_SIZE = 100;
+
+class CircularQueue {
+public:
+    CircularQueue() {
+        front = -1;
+        rear = -1;
+    }
+
+    bool isEmpty() {
+        return front == -1;
+    }
+
+    bool isFull() {
+        return (rear + 1) % MAX_SIZE == front;
+    }
+
+    void enqueue(int data) {
+        if (isFull()) {
+            cout << "Queue is full" << endl;
+            return;
+        }
+
+        if (isEmpty()) {
+            front = rear = 0;
+        } else {
+            rear = (rear + 1) % MAX_SIZE;
+        }
+
+        queue[rear] = data;
+        cout << data << " enqueued" << endl;
+    }
+
+private:
+    int queue[MAX_SIZE];
+    int front, rear;
+};
+
+int main() {
+    CircularQueue cq;
+
+    cq.enqueue(10);
+    cq.enqueue(20);
+    cq.enqueue(30);
+
+    return 0;
+}
