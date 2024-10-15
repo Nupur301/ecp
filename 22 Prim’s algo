@@ -1,0 +1,77 @@
+Represent a graph of your college campus using adjacency list /adjacency matrix.Find minimum spanning tree
+a) Using Prim’s algorithm.
+
+#include <iostream>
+#include <vector>
+#include <limits>
+#include <queue>
+
+using namespace std;
+
+class Graph {
+private:
+    int V; // Number of vertices
+    vector<vector<pair<int, int>>> adj; // Adjacency list
+
+public:
+    Graph(int v) : V(v), adj(v) {}
+
+    void addEdge(int src, int dest, int weight) {
+        adj[src].emplace_back(dest, weight);
+        adj[dest].emplace_back(src, weight); // Undirected graph
+    }
+
+    void primMST();
+};
+
+// Prim's algorithm to find MST
+void Graph::primMST() {
+    vector<int> key(V, numeric_limits<int>::max()); // Minimum weight edge
+    vector<int> parent(V, -1); // To store the MST
+    vector<bool> inMST(V, false); // Track vertices in MST
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; // Min-heap
+
+    key[0] = 0; // Start from the first vertex
+    pq.emplace(0, 0); // (weight, vertex)
+
+    while (!pq.empty()) {
+        int u = pq.top().second; // Get the vertex with the minimum weight edge
+        pq.pop();
+        inMST[u] = true; // Include in MST
+
+        // Traverse all adjacent vertices
+        for (const auto& neighbor : adj[u]) {
+            int v = neighbor.first; // Neighbor vertex
+            int weight = neighbor.second; // Weight of the edge
+
+            // If the neighbor is not in MST and the weight is smaller than the current key
+            if (!inMST[v] && weight < key[v]) {
+                key[v] = weight; // Update key
+                parent[v] = u; // Update parent
+                pq.emplace(key[v], v); // Add to priority queue
+            }
+        }
+    }
+
+    // Print the MST
+    cout << "Edges in the Minimum Spanning Tree:\n";
+    for (int i = 1; i < V; ++i) {
+        cout << "Department " << parent[i] << " - Department " << i << " : " << key[i] << endl;
+    }
+}
+
+int main() {
+    Graph campus(5); // 5 departments
+    campus.addEdge(0, 1, 10); // A-B
+    campus.addEdge(0, 2, 15); // A-C
+    campus.addEdge(1, 2, 5);  // B-C
+    campus.addEdge(1, 3, 20); // B-D
+    campus.addEdge(2, 3, 30); // C-D
+    campus.addEdge(2, 4, 25); // C-E
+    campus.addEdge(3, 4, 10); // D-E
+
+    cout << "\nMinimum Spanning Tree using Prim's Algorithm:\n";
+    campus.primMST();
+
+    return 0;
+}
