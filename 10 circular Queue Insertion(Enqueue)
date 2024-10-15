@@ -1,6 +1,8 @@
+
 //Implement Circular Queue using Array. Perform following operations on it.
 a) Insertion (Enqueue)
-
+b) Deletion (Dequeue)
+c) Display
 
 #include <iostream>
 
@@ -39,6 +41,36 @@ public:
         cout << data << " enqueued" << endl;
     }
 
+    int dequeue() {
+        if (isEmpty()) {
+            cout << "Queue is empty" << endl;
+            return -1;
+        }
+
+        int data = queue[front];
+        if (front == rear) {
+            front = rear = -1;
+        } else {
+            front = (front + 1) % MAX_SIZE;
+        }
+
+        cout << data << " dequeued" << endl;
+        return data;
+    }
+
+    void display() {
+        if (isEmpty()) {
+            cout << "Queue is empty" << endl;
+            return;
+        }
+
+        cout << "Queue elements: ";
+        for (int i = front; i != rear; i = (i + 1) % MAX_SIZE) {
+            cout << queue[i] << " ";
+        }
+        cout << queue[rear] << endl;
+    }
+
 private:
     int queue[MAX_SIZE];
     int front, rear;
@@ -50,6 +82,8 @@ int main() {
     cq.enqueue(10);
     cq.enqueue(20);
     cq.enqueue(30);
+    cq.dequeue();
+    cq.display();
 
     return 0;
 }
