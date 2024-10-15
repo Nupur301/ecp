@@ -1,0 +1,122 @@
+Represent a graph of your college campus using adjacency list /adjacency matrix. Find minimum spanning tree
+a) Using Kruskal’s algorithm.
+
+#include <iostream>
+#include <vector>
+#include <list>
+#include <algorithm>
+
+using namespace std;
+
+struct Edge {
+    int src, dest, weight;
+};
+
+class Graph {
+private:
+    int V; // Number of vertices
+    vector<list<pair<int, int>>> adj; // Adjacency list
+    vector<Edge> edges; // List of edges for Kruskal's algorithm
+
+public:
+    Graph(int v) : V(v), adj(v) {}
+
+    void addEdge(int src, int dest, int weight) {
+        adj[src].emplace_back(dest, weight);
+        adj[dest].emplace_back(src, weight); // Undirected graph
+        edges.push_back({src, dest, weight});
+    }
+
+    void printGraph() {
+        char departments[] = {'A', 'B', 'C', 'D', 'E'};
+        for (int i = 0; i < V; ++i) {
+            cout << departments[i] << ": ";
+            for (const auto& neighbor : adj[i]) {
+                cout << "(" << departments[neighbor.first] << ", " << neighbor.second << ") ";
+            }
+            cout << endl;
+        }
+    }
+
+    void kruskalMST();
+    int findParent(int i, vector<int>& parent);
+    void unionSets(int x, int y, vector<int>& parent, vector<int>& rank);
+};
+
+// Function to find the parent of a node
+int Graph::findParent(int i, vector<int>& parent) {
+    if (parent[i] == -1) {
+        return i;
+    }
+    return findParent(parent[i], parent);
+}
+
+// Function to perform union of two sets
+void Graph::unionSets(int x, int y, vector<int>& parent, vector<int>& rank) {
+    int xroot = findParent(x, parent);
+    int yroot = findParent(y, parent);
+    if (rank[xroot] < rank[yroot]) {
+        parent[xroot] = yroot;
+    } else if (rank[xroot] > rank[yroot]) {
+        parent[yroot] = xroot;
+    } else {
+        parent[yroot] = xroot;
+        rank[xroot]++;
+    }
+}
+
+// Kruskal's algorithm to find MST
+void Graph::kruskalMST() {
+    vector<Edge> result; // To store the resultant MST
+    int e = 0; // Initial count of edges in MST
+    int i = 0; // Initial index of sorted edges
+    int totalWeight = 0;
+
+    // Sort edges based on weight
+    sort(edges.begin(), edges.end(), [](Edge a, Edge b) {
+        return a.weight < b.weight;
+    });
+
+    vector<int> parent(V, -1);
+    vector<int> rank(V, 0);
+
+    while (e < V - 1 && i < edges.size()) {
+        Edge next_edge = edges[i++];
+        int x = findParent(next_edge.src, parent);
+        int y = findParent(next_edge.dest, parent);
+
+        if (x != y) {
+            result.push_back(next_edge);
+            unionSets(x, y, parent, rank);
+            e++;
+            totalWeight += next_edge.weight;
+        }
+    }
+
+    // Print the MST
+    cout << "Edges in the Minimum Spanning Tree:\n";
+    for (const auto& edge : result) {
+        char departments[] = {'A', 'B', 'C', 'D', 'E'};
+        cout << departments[edge.src] << " - " << departments[edge.dest] << " : " << edge.weight << endl;
+    }
+    cout << "Total Weight of MST: " << totalWeight << endl;
+}
+
+int main() {
+    Graph campus(5); // 5 departments
+    campus.addEdge(0, 1, 10); // A-B
+    campus.addEdge(0, 2, 15); // A-C
+    campus.addEdge(1, 2, 5);  // B-C
+    campus.addEdge(1, 3, 20); // B-D
+    campus.addEdge(2, 3, 30); // C-D
+    campus.addEdge(2, 4, 25); // C-E
+    campus.addEdge(3, 4, 10); // D-E
+
+    cout << "Adjacency List Representation:\n";
+    campus.printGraph();
+
+    cout << "\nMinimum Spanning Tree using Kruskal's Algorithm:\n";
+    campus.kruskalMST();
+
+    return 0;
+}
