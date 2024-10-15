@@ -1,0 +1,76 @@
+//Construct an Expression Tree from prefix expression. Perform recursive and nonrecursive In-order traversals.
+
+
+#include <iostream>
+#include <stack>
+using namespace std;
+
+struct TreeNode {
+    char value;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(char val) {
+        value = val;
+        left = right = nullptr;
+    }
+};
+
+class ExpressionTree {
+public:
+    bool isOperator(char c) {
+        return (c == '+' || c == '-' || c == '*' || c == '/');
+    }
+
+    TreeNode* constructTree(string prefix) {
+        stack<TreeNode*> st;
+        for (int i = prefix.size() - 1; i >= 0; --i) {
+            if (!isOperator(prefix[i])) {
+                st.push(new TreeNode(prefix[i]));
+            } else {
+                TreeNode* node = new TreeNode(prefix[i]);
+                node->left = st.top(); st.pop();
+                node->right = st.top(); st.pop();
+                st.push(node);
+            }
+        }
+        return st.top();
+    }
+
+    void inorderRecursive(TreeNode* node) {
+        if (node != nullptr) {
+            inorderRecursive(node->left);
+            cout << node->value << " ";
+            inorderRecursive(node->right);
+        }
+    }
+
+    void inorderNonRecursive(TreeNode* root) {
+        stack<TreeNode*> st;
+        TreeNode* curr = root;
+        while (curr != nullptr || !st.empty()) {
+            while (curr != nullptr) {
+                st.push(curr);
+                curr = curr->left;
+            }
+            curr = st.top(); st.pop();
+            cout << curr->value << " ";
+            curr = curr->right;
+        }
+    }
+};
+
+int main() {
+    ExpressionTree et;
+    string prefix = "*+abc";
+    TreeNode* root = et.constructTree(prefix);
+
+    cout << "Recursive In-order Traversal: ";
+    et.inorderRecursive(root);
+    cout << endl;
+
+    cout << "Non-recursive In-order Traversal: ";
+    et.inorderNonRecursive(root);
+    cout << endl;
+
+    return 0;
+}
