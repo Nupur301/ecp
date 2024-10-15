@@ -1,0 +1,96 @@
+//Implement stack as an abstract data type using singly linked list and use this ADT
+for evaluation of prefix expression.
+
+#include <iostream>
+#include <string>
+#include <alogrithm
+
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+class Stack {
+public:
+    Stack() {
+        top = nullptr;
+    }
+
+    bool isEmpty() {
+        return top == nullptr;
+    }
+
+    void push(int data) {
+        Node* newNode = new Node;
+        newNode->data = data;
+        newNode->next = top;
+        top = newNode;
+    }
+
+    int pop() {
+        if (isEmpty()) {
+            return -1; // Empty stack
+        }
+
+        int data = top->data;
+        Node* temp = top;
+        top = top->next;
+        delete temp;
+        return data;
+    }
+
+    int peek() {
+        if (isEmpty()) {
+            return -1; // Empty stack
+        }
+
+        return top->data;
+    }
+
+private:
+    Node* top;
+};
+
+int evaluatePrefix(string prefix) {
+    reverse(prefix.begin(), prefix.end());
+    Stack operandStack;
+
+    for (char c : prefix) {
+        if (isdigit(c)) {
+            operandStack.push(c - '0');
+        } else if (c == '+' || c == '-' || c == '*' || c == '/') {
+            int operand1 = operandStack.pop();
+            int operand2 = operandStack.pop();
+
+            switch (c) {
+                case '+':
+                    operandStack.push(operand1 + operand2);
+                    break;
+                case '-':
+                    operandStack.push(operand1 - operand2);
+                    break;
+                case '*':
+                    operandStack.push(operand1 * operand2);
+                    break;
+                case '/':
+                    operandStack.push(operand1 / operand2);
+                    break;
+            }
+        }
+    }
+
+    return operandStack.pop();
+}
+
+int main() {
+    string prefix;
+    cout << "Enter the prefix expression: ";
+    cin >> prefix;
+
+    int result = evaluatePrefix(prefix);
+    cout << "Result: " << result << endl;
+
+    return 0;
+}
