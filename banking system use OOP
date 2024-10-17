@@ -1,0 +1,94 @@
+import java.util.Scanner;
+
+class BankAccount {
+    private String accountHolder;
+    private double balance;
+    private final double withdrawalLimit;
+
+    // Constructor
+    public BankAccount(String accountHolder, double withdrawalLimit) {
+        this.accountHolder = accountHolder;
+        this.balance = 0;
+        this.withdrawalLimit = withdrawalLimit;
+    }
+
+    // Method to deposit money
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposited: $" + amount);
+        } else {
+            System.out.println("Invalid deposit amount.");
+        }
+    }
+
+    // Method to withdraw money
+    public void withdraw(double amount) {
+        if (amount <= balance && amount <= withdrawalLimit) {
+            balance -= amount;
+            System.out.println("Withdrew: $" + amount);
+        } else if (amount > withdrawalLimit) {
+            System.out.println("Exceeds daily withdrawal limit of $" + withdrawalLimit);
+        } else {
+            System.out.println("Insufficient balance.");
+        }
+    }
+
+    // Method to check balance
+    public void checkBalance() {
+        System.out.println("Current Balance: $" + balance);
+    }
+
+    // Method to display account information
+    public void displayAccountInfo() {
+        System.out.println("Account Holder: " + accountHolder);
+        System.out.println("Balance: $" + balance);
+        System.out.println("Withdrawal Limit: $" + withdrawalLimit);
+    }
+}
+
+public class BankingSolution {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter account holder's name: ");
+        String name = scanner.nextLine();
+        BankAccount account = new BankAccount(name, 500); // Withdrawal limit set to $500
+
+        int choice;
+        do {
+            System.out.println("\n1. Deposit Money");
+            System.out.println("2. Withdraw Money");
+            System.out.println("3. Check Balance");
+            System.out.println("4. Display Account Information");
+            System.out.println("5. Exit");
+            System.out.print("Choose an operation: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter amount to deposit: ");
+                    double depositAmount = scanner.nextDouble();
+                    account.deposit(depositAmount);
+                    break;
+                case 2:
+                    System.out.print("Enter amount to withdraw: ");
+                    double withdrawAmount = scanner.nextDouble();
+                    account.withdraw(withdrawAmount);
+                    break;
+                case 3:
+                    account.checkBalance();
+                    break;
+                case 4:
+                    account.displayAccountInfo();
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        } while (choice != 5);
+
+        scanner.close();
+    }
+}
