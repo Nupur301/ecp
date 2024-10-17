@@ -1,0 +1,66 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class PropertyCounter {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<Integer> numbers = new ArrayList<>();
+        
+        // Input numbers
+        System.out.println("Enter integers (type 'done' to finish):");
+        while (scanner.hasNext()) {
+            if (scanner.hasNextInt()) {
+                numbers.add(scanner.nextInt());
+            } else if (scanner.next().equalsIgnoreCase("done")) {
+                break;
+            } else {
+                System.out.println("Please enter valid integers or 'done' to finish.");
+            }
+        }
+
+        // Count properties
+        System.out.println("Count of Even Numbers: " + countEvenNumbers(numbers));
+        System.out.println("Count of Odd Numbers: " + countOddNumbers(numbers));
+        System.out.println("Count of Prime Numbers: " + countPrimeNumbers(numbers));
+        System.out.println("Count of Palindromes: " + countPalindromes(numbers));
+        
+        scanner.close();
+    }
+
+    // Method to count even numbers
+    public static long countEvenNumbers(List<Integer> numbers) {
+        return numbers.stream().filter(n -> n % 2 == 0).count();
+    }
+
+    // Method to count odd numbers
+    public static long countOddNumbers(List<Integer> numbers) {
+        return numbers.stream().filter(n -> n % 2 != 0).count();
+    }
+
+    // Method to check if a number is prime
+    public static boolean isPrime(int num) {
+        if (num <= 1) return false;
+        for (int i = 2; i <= Math.sqrt(num); i++) {
+            if (num % i == 0) return false;
+        }
+        return true;
+    }
+
+    // Method to count prime numbers
+    public static long countPrimeNumbers(List<Integer> numbers) {
+        return numbers.stream().filter(PropertyCounter::isPrime).count();
+    }
+
+    // Method to check if a number is palindrome
+    public static boolean isPalindrome(int num) {
+        String str = Integer.toString(num);
+        return str.equals(new StringBuilder(str).reverse().toString());
+    }
+
+    // Method to count palindromes
+    public static long countPalindromes(List<Integer> numbers) {
+        return numbers.stream().filter(PropertyCounter::isPalindrome).count();
+    }
+}
