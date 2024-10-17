@@ -1,0 +1,100 @@
+package assignment;
+import java.util.Scanner;
+
+// PaymentProcessor Interface
+interface PaymentProcessor {
+    void pay(int amount);
+}
+
+// CreditCard Class
+class CreditCard implements PaymentProcessor {
+    private String name, expDate;
+    private double cardNo;
+
+    CreditCard(Scanner sc) {
+        System.out.print("Card holder Name: ");
+        this.name = sc.next();
+        System.out.print("Card Number: ");
+        this.cardNo = sc.nextDouble();
+        System.out.print("Card Expire Date: ");
+        this.expDate = sc.next();
+    }
+
+    @Override
+    public void pay(int amount) {
+        System.out.println("Paying through Credit Card: Charging $" + amount);
+    }
+}
+
+// PayPal Class
+class PayPal implements PaymentProcessor {
+    PayPal() {
+        System.out.println("Checking Internet Connection...");
+    }
+
+    @Override
+    public void pay(int amount) {
+        System.out.println("Paying through PayPal: Charging $" + amount);
+    }
+}
+
+// BitCoin Class
+class BitCoin implements PaymentProcessor {
+    private String address;
+
+    BitCoin(Scanner sc) {
+        System.out.print("Enter Transaction Input Address: ");
+        this.address = sc.next();
+    }
+
+    @Override
+    public void pay(int amount) {
+        System.out.println("Paying through BitCoin: Charging $" + amount);
+    }
+}
+
+// Order Class
+class Order {
+    private final PaymentProcessor paymentProcessor;
+    private final int amount;
+
+    public Order(int amount, PaymentProcessor paymentProcessor) {
+        this.amount = amount;
+        this.paymentProcessor = paymentProcessor;
+    }
+
+    public void process() {
+        paymentProcessor.pay(amount);
+    }
+}
+
+// Main Class
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.println("\n**** SHOPPING CART ****");
+            System.out.print("1. Credit Card \n2. PayPal \n3. BitCoin \n4. Exit\nEnter your choice: ");
+            int choice = sc.nextInt();
+
+            if (choice == 4) {
+                System.out.println("Thank you for shopping!");
+                break;
+            }
+
+            System.out.print("Enter amount to transfer: ");
+            int amount = sc.nextInt();
+
+            PaymentProcessor paymentProcessor = null;
+            switch (choice) {
+                case 1: paymentProcessor = new CreditCard(sc); break;
+                case 2: paymentProcessor = new PayPal(); break;
+                case 3: paymentProcessor = new BitCoin(sc); break;
+                default: System.out.println("Invalid Payment Mode!"); continue;
+            }
+
+            new Order(amount, paymentProcessor).process();
+        }
+        sc.close();
+    }
+}
