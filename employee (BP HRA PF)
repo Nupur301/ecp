@@ -1,0 +1,91 @@
+class Employee {
+    protected String empName;
+    protected String empId;
+    protected String address;
+    protected String mailId;
+    protected String mobileNo;
+    protected double basicPay;
+
+    public Employee(String empName, String empId, String address, String mailId, String mobileNo, double basicPay) {
+        this.empName = empName;
+        this.empId = empId;
+        this.address = address;
+        this.mailId = mailId;
+        this.mobileNo = mobileNo;
+        this.basicPay = basicPay;
+    }
+
+    public double calculateDA() {
+        return 0.97 * basicPay;
+    }
+
+    public double calculateHRA() {
+        return 0.10 * basicPay;
+    }
+
+    public double calculatePF() {
+        return 0.12 * basicPay;
+    }
+
+    public double calculateClubFund() {
+        return 0.001 * basicPay;
+    }
+
+    public double calculateGrossSalary() {
+        return basicPay + calculateDA() + calculateHRA();
+    }
+
+    public double calculateNetSalary() {
+        return calculateGrossSalary() - calculatePF() - calculateClubFund();
+    }
+
+    public void printPaySlip() {
+        System.out.println("Pay Slip for " + empName + " (ID: " + empId + ")");
+        System.out.printf("Basic Pay: $%.2f\n", basicPay);
+        System.out.printf("DA: $%.2f\n", calculateDA());
+        System.out.printf("HRA: $%.2f\n", calculateHRA());
+        System.out.printf("PF: $%.2f\n", calculatePF());
+        System.out.printf("Club Fund: $%.2f\n", calculateClubFund());
+        System.out.printf("Gross Salary: $%.2f\n", calculateGrossSalary());
+        System.out.printf("Net Salary: $%.2f\n", calculateNetSalary());
+        System.out.println("---------------------------------------------------");
+    }
+}
+
+class Programmer extends Employee {
+    public Programmer(String empName, String empId, String address, String mailId, String mobileNo, double basicPay) {
+        super(empName, empId, address, mailId, mobileNo, basicPay);
+    }
+}
+
+class TeamLead extends Employee {
+    public TeamLead(String empName, String empId, String address, String mailId, String mobileNo, double basicPay) {
+        super(empName, empId, address, mailId, mobileNo, basicPay);
+    }
+}
+
+class AssistantProjectManager extends Employee {
+    public AssistantProjectManager(String empName, String empId, String address, String mailId, String mobileNo, double basicPay) {
+        super(empName, empId, address, mailId, mobileNo, basicPay);
+    }
+}
+
+class ProjectManager extends Employee {
+    public ProjectManager(String empName, String empId, String address, String mailId, String mobileNo, double basicPay) {
+        super(empName, empId, address, mailId, mobileNo, basicPay);
+    }
+}
+
+public class EmployeeManagementSystem {
+    public static void main(String[] args) {
+        Employee emp1 = new Programmer("Alice", "P001", "123 Main St", "alice@example.com", "1234567890", 5000);
+        Employee emp2 = new TeamLead("Bob", "TL001", "456 Elm St", "bob@example.com", "2345678901", 7000);
+        Employee emp3 = new AssistantProjectManager("Charlie", "APM001", "789 Oak St", "charlie@example.com", "3456789012", 8000);
+        Employee emp4 = new ProjectManager("Diana", "PM001", "101 Pine St", "diana@example.com", "4567890123", 9000);
+
+        emp1.printPaySlip();
+        emp2.printPaySlip();
+        emp3.printPaySlip();
+        emp4.printPaySlip();
+    }
+}
