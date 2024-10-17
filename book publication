@@ -1,0 +1,202 @@
+package assignment;
+
+import java.util.Scanner;
+
+abstract class Publication {
+    private String title;
+    private int price;
+    private int copies;
+    private int total;
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setCopies(int copies) {
+        this.copies = copies;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public int getCopies() {
+        return copies;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void readPublication(Scanner sc) {
+        System.out.print("Enter title: ");
+        title = sc.next();
+        System.out.print("Enter price: ");
+        price = sc.nextInt();
+        System.out.print("Enter copies: ");
+        copies = sc.nextInt();
+    }
+
+    public void display() {
+        System.out.print(title + "\t" + price + "\t" + copies);
+    }
+
+    public void sellCopies(int number) {
+        if (number <= copies) {
+            copies -= number;
+            total += number * price;
+            System.out.println("You purchased " + number + " copies. You have to pay: $" + (price * number));
+        } else {
+            System.out.println("Insufficient stock!");
+        }
+    }
+}
+
+// Book class
+class Book extends Publication {
+    private String author;
+
+    public void readBook(Scanner sc) {
+        readPublication(sc);
+        System.out.print("Enter author: ");
+        author = sc.next();
+    }
+
+    public void displayBook() {
+        System.out.println("Title\tPrice\tCopies\tAuthor");
+        display();
+        System.out.println("\t" + author);
+    }
+
+    public void orderCopies(int number) {
+        setCopies(getCopies() + number);
+        System.out.println("Order successful. Copies available: " + getCopies());
+    }
+}
+
+// Magazine class
+class Magazine extends Publication {
+    private String issueDate;
+
+    public void readMagazine(Scanner sc) {
+        readPublication(sc);
+        System.out.print("Enter current issue date [dd/mm/yyyy]: ");
+        issueDate = sc.next();
+    }
+
+    public void displayMagazine() {
+        System.out.println("Title\tPrice\tCopies\tIssue Date");
+        display();
+        System.out.println("\t" + issueDate);
+    }
+
+    public void receiveIssue(String newIssueDate, int orderQty) {
+        setCopies(orderQty);
+        issueDate = newIssueDate;
+        System.out.println("Magazine " + getTitle() + " with issue date " + issueDate + " available.");
+    }
+}
+
+// Main class
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Book book = new Book();
+        Magazine magazine = new Magazine();
+        int outer;
+
+        do {
+            System.out.println("\n**** CHOOSE ONE OF THE FOLLOWING ****");
+            System.out.println("1. Book\n2. Magazine\n3. Total Sale Amount\n4. Revenue of Publication");
+            System.out.print("Choice: ");
+            int choice = sc.nextInt();
+
+            if (choice == 4) {
+                System.out.println("Total Revenue: $" + (book.getCopies() * book.getPrice() + magazine.getCopies() * magazine.getPrice()));
+                continue;
+            }
+
+            System.out.print("Enter amount for transaction: ");
+            int amount = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    handleBookMenu(sc, book);
+                    break;
+                case 2:
+                    handleMagazineMenu(sc, magazine);
+                    break;
+                case 3:
+                    System.out.println("Total Sale Amount: $" + (book.getTotal() + magazine.getTotal()));
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+
+            System.out.print("Do you want to continue with publications? (1: Yes, 0: No): ");
+            outer = sc.nextInt();
+        } while (outer != 0);
+        
+        sc.close();
+    }
+
+    private static void handleBookMenu(Scanner sc, Book book) {
+        int option;
+        do {
+            System.out.println("\n1. Read Book\n2. Display Book\n3. Sale Copies\n4. Order Copies");
+            System.out.print("Choice: ");
+            option = sc.nextInt();
+            switch (option) {
+                case 1:
+                    book.readBook(sc);
+                    break;
+                case 2:
+                    book.displayBook();
+                    break;
+                case 3:
+                    System.out.print("How many copies do you want? ");
+                    book.sellCopies(sc.nextInt());
+                    break;
+                case 4:
+                    System.out.print("Enter copies to order: ");
+                    book.orderCopies(sc.nextInt());
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (option >= 1 && option <= 4);
+    }
+
+    private static void handleMagazineMenu(Scanner sc, Magazine magazine) {
+        int option;
+        do {
+            System.out.println("\n1. Read Magazine\n2. Display Magazine\n3. Sale Magazine Copies\n4. Receive New Issue");
+            System.out.print("Choice: ");
+            option = sc.nextInt();
+            switch (option) {
+                case 1:
+                    magazine.readMagazine(sc);
+                    break;
+                case 2:
+                    magazine.displayMagazine();
+                    break;
+                case 3:
+                    System.out.print("How many copies do you want? ");
+                    magazine.sellCopies(sc.nextInt());
+                    break;
+                case 4:
+                    System.out.print("Enter the new issue date [dd/mm/yyyy]: ");
+                    String date = sc.next();
+                    System.out.print("Enter new copies ordered: ");
+                    magazine.receiveIssue(date, sc.nextInt());
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (option >= 1 && option <= 4);
+    }
+}
