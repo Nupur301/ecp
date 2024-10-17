@@ -1,0 +1,61 @@
+import java.util.Scanner;
+
+// Base class Shape
+abstract class Shape {
+    protected double value1;
+    protected double value2;
+
+    // Method to input dimensions
+    public void inputDimensions() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter first dimension: ");
+        value1 = scanner.nextDouble();
+        System.out.print("Enter second dimension: ");
+        value2 = scanner.nextDouble();
+    }
+
+    // Abstract method to compute area
+    abstract double computeArea();
+}
+
+// Derived class Triangle
+class Triangle extends Shape {
+    @Override
+    double computeArea() {
+        // Area of triangle = 0.5 * base * height
+        return 0.5 * value1 * value2;
+    }
+}
+
+// Derived class Rectangle
+class Rectangle extends Shape {
+    @Override
+    double computeArea() {
+        // Area of rectangle = width * height
+        return value1 * value2;
+    }
+}
+
+// Main class
+public class ShapeAreaCalculator {
+    public static void main(String[] args) {
+        Shape shape;
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Choose shape (1 for Triangle, 2 for Rectangle): ");
+        int choice = scanner.nextInt();
+
+        if (choice == 1) {
+            shape = new Triangle();
+        } else if (choice == 2) {
+            shape = new Rectangle();
+        } else {
+            System.out.println("Invalid choice.");
+            return;
+        }
+
+        shape.inputDimensions(); // Input dimensions
+        double area = shape.computeArea(); // Calculate area
+        System.out.printf("The area is: %.2f\n", area); // Display area
+    }
+}
