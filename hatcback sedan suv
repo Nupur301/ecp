@@ -1,0 +1,100 @@
+// Base class
+abstract class Car {
+    public abstract void assemble();
+    public abstract void addAccessories();
+    public abstract void paint();
+}
+
+// Hatchback class
+class Hatchback extends Car {
+    @Override
+    public void assemble() {
+        System.out.println("Assembling Hatchback.");
+    }
+
+    @Override
+    public void addAccessories() {
+        System.out.println("Adding accessories for Hatchback.");
+    }
+
+    @Override
+    public void paint() {
+        System.out.println("Painting Hatchback.");
+    }
+}
+
+// Sedan class
+class Sedan extends Car {
+    @Override
+    public void assemble() {
+        System.out.println("Assembling Sedan.");
+    }
+
+    @Override
+    public void addAccessories() {
+        System.out.println("Adding accessories for Sedan.");
+    }
+
+    @Override
+    public void paint() {
+        System.out.println("Painting Sedan.");
+    }
+}
+
+// SUV class
+class SUV extends Car {
+    @Override
+    public void assemble() {
+        System.out.println("Assembling SUV.");
+    }
+
+    @Override
+    public void addAccessories() {
+        System.out.println("Adding accessories for SUV.");
+    }
+
+    @Override
+    public void paint() {
+        System.out.println("Painting SUV.");
+    }
+}
+
+// Factory class
+class CarFactory {
+    public static Car createCar(String type) {
+        Car car = null;
+        switch (type.toLowerCase()) {
+            case "hatchback":
+                car = new Hatchback();
+                break;
+            case "sedan":
+                car = new Sedan();
+                break;
+            case "suv":
+                car = new SUV();
+                break;
+            default:
+                System.out.println("Car type not recognized.");
+                return null;
+        }
+        // Call common steps
+        car.assemble();
+        car.addAccessories();
+        car.paint();
+        return car;
+    }
+}
+
+// Test class
+public class TestFactoryPattern {
+    public static void main(String[] args) {
+        System.out.println("Creating a Hatchback:");
+        Car hatchback = CarFactory.createCar("Hatchback");
+
+        System.out.println("\nCreating a Sedan:");
+        Car sedan = CarFactory.createCar("Sedan");
+
+        System.out.println("\nCreating an SUV:");
+        Car suv = CarFactory.createCar("SUV");
+    }
+}
